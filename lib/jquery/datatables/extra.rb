@@ -44,10 +44,10 @@ module Jquery
         @fixes = [
           # Default fix for replacing url() with image-url() in stylesheets:
           {
-            "pattern" => File.join(target_for_media_type("css"), "**/*.css"),
+            "pattern" => "stylesheets/**/*.css",
             "extension" => "scss",
             "replacements" => [
-              [ /url\(["']?([A-Za-z0-9_\.\/]+)['"]?\)/, ->() { "image-url('" + $1.sub("../images", IMAGE_URL_PREFIX.gsub(/:extra/, @name)) + "')" } ]
+              [ /url\(["']?\.\.\/images\/([A-Za-z0-9_\.\/]+)['"]?\)/, 'image-url(\'blabla/\1\')' ]#->(m) { print m.inspect; "image-url('" + "".sub("../images", IMAGE_URL_PREFIX.gsub(/:extra/, @name)) + "')" } ]
             ]
           }
         ]
@@ -138,7 +138,7 @@ module Jquery
 
       def fix_assets
         @fixes.each do |options|
-          files = Dir.glob(options.delete("pattern"))
+          files = Dir.glob(File.join(ASSET_PATH, options.delete("pattern")))
           AssetFixer.fix(files, options)
         end
       end

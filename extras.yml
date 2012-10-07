@@ -10,7 +10,7 @@ TableTools:
         - "./TableTools"
   fixes:
     -
-      pattern: "javascripts/dataTables/extras/TableTools/TableTools.js"
+      pattern: "javascripts/**/TableTools.js"
       replacements:
         - [ "media/swf/copy_csv_xls_pdf.swf", "<%= asset_path(\"dataTables/extras/TableTools/swf/copy_csv_xls_pdf.swf\") %>" ]
       extension: "erb"
