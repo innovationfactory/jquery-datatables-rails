@@ -2,6 +2,7 @@
 .bundle
 Gemfile.lock
 pkg/*
+tmp/*
 .DS_Store
 .bin
 vendor/bundle

@@ -1,0 +1,16 @@
+AutoFill:
+  version: 1.1.2
+TableTools:
+  version: 2.1.4
+  media:
+    js:
+      target: "javascripts/dataTables/extras/TableTools"
+      index:
+        - "./ZeroClipboard"
+        - "./TableTools"
+  fixes:
+    -
+      pattern: "javascripts/dataTables/extras/TableTools/TableTools.js"
+      replacements:
+        - [ "media/swf/copy_csv_xls_pdf.swf", "<%= asset_path(\"dataTables/extras/TableTools/swf/copy_csv_xls_pdf.swf\") %>" ]
+      extension: "erb"
