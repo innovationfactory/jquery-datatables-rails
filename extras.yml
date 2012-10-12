@@ -1,7 +1,23 @@
+Scroller:
+  version: 1.1.0
+  # exclude_files: "/media/data"
+KeyTable:
+  version: 1.1.7
+  media_path: "/"
+FixedHeader:
+  version: 2.0.6
+  media_path: "/"
+FixedColumns:
+  version: 2.0.3
+ColVis:
+  version: 1.0.8
+ColReorder:
+  version: 1.0.8
 AutoFill:
   version: 1.1.2
 TableTools:
   version: 2.1.4
+  source: "/Users/sjoerdandringa/Projects/jquery-datatables-rails/tmp/TableTools"
   media:
     js:
       target: "javascripts/dataTables/extras/TableTools"
@@ -11,6 +27,6 @@ TableTools:
   fixes:
     -
       pattern: "javascripts/**/TableTools.js"
+      add_extension: "erb"
       replacements:
         - [ "media/swf/copy_csv_xls_pdf.swf", "<%= asset_path(\"dataTables/extras/TableTools/swf/copy_csv_xls_pdf.swf\") %>" ]
-      extension: "erb"

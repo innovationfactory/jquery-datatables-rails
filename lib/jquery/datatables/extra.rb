@@ -21,8 +21,9 @@ module Jquery
         "other"  => "media/dataTables/extras/:extra/:type"
       }
 
-      # Home of images on the web; for SCSS's image-url().
-      IMAGE_URL_PREFIX = "dataTables/extras/:extra"
+      # Settings for fixing 'url()' in scss.
+      IMAGE_URL_REGEXP = /url\(["']?\.\.\/images\/([A-Za-z0-9_\.\/]+)['"]?\)/
+      IMAGE_URL_SUB = 'image-url(\'dataTables/extras/:extra/\1\')'
 
       # Location where downloaded source code is kept.
       SOURCE_PATH = File.join(ROOT, "/tmp/extras")
@@ -30,6 +31,7 @@ module Jquery
       def initialize(name, options)
         @name    = name
         @source  = options["source"]
+        @media_path = options["media_path"] || "/media"
         unless @source
           @url = options["url"] || begin
             version = options["version"] || raise("Version is required.")
@@ -41,17 +43,17 @@ module Jquery
         @targets = DEFAULT_MEDIA_TARGETS.tap do |targets|
           targets.merge!(options["media"]) if options["media"]
         end
-        @fixes = [
-          # Default fix for replacing url() with image-url() in stylesheets:
-          {
+        @fixes = options["fixes"] || []
+        # Add default fix for replacing url() with image-url() in stylesheets:
+        unless options["fix_css"] == false
+          @fixes << {
             "pattern" => "stylesheets/**/*.css",
-            "extension" => "scss",
+            "add_extension" => "scss",
             "replacements" => [
-              [ /url\(["']?\.\.\/images\/([A-Za-z0-9_\.\/]+)['"]?\)/, 'image-url(\'blabla/\1\')' ]#->(m) { print m.inspect; "image-url('" + "".sub("../images", IMAGE_URL_PREFIX.gsub(/:extra/, @name)) + "')" } ]
+              [IMAGE_URL_REGEXP, IMAGE_URL_SUB.gsub(":extra", @name)]
             ]
           }
-        ]
-        @fixes += options["fixes"] if options[:fixes]
+        end
       end
 
       def self.remove(name)
@@ -59,8 +61,9 @@ module Jquery
       end
 
       def install
+        print "Installing #{@name}...\n" if verbose?
         @source ? copy_source : download_source
-        copy_media
+        copy_media(@media_path)
         fix_assets
       ensure
         cleanup
@@ -91,11 +94,9 @@ module Jquery
         system("curl -L #{@url} | tar xz -C '#{SOURCE_PATH}'")
       end
 
-      def media_dirs
-        Dir.glob(File.join(SOURCE_PATH, "*/media/**"))
-      end
-
-      def copy_media
+      def copy_media(media_path)
+        pattern = File.join("*", media_path, "*") # prepend wildcard since there's always a root with an arbitrary name.
+        media_dirs = Dir.glob(File.join(SOURCE_PATH, pattern)).select { |f| File.directory?(f) }
         media_dirs.each do |dir|
           type   = dir.split("/").last
           target = target_for_media_type(type)

@@ -7,7 +7,7 @@ module Jquery
           options["replacements"].each { |pat, sub| content.gsub!(pat, sub) } if options["replacements"]
 
           File.open(file_path, 'w') { |f| f << content }
-          File.rename(file_path, "#{file_path}.#{options["extension"]}") if options[:extension]
+          File.rename(file_path, "#{file_path}.#{options["add_extension"]}") if options["add_extension"]
 
           print "Fixed asset URLs in #{file_path}.\n" if options[:verbose]
         end

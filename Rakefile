@@ -16,7 +16,6 @@ namespace :extras do
 	task :update do
     yml = File.read("extras.yml")
     extras = YAML.load(yml)
-    print extras.inspect
     extras.each do |name, conf|
       extra = Jquery::Datatables::Extra.new(name, conf.merge("verbose" => true))
       extra.install!
